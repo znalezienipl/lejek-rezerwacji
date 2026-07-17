@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState, type CSSProperties, type ElementType } from "react"
-import { useBrand } from "./brand-context"
+import { useTokens } from "./brand-context"
 
 type Direction = "up" | "down" | "left" | "right" | "none"
 
@@ -26,7 +26,7 @@ export function Reveal({
   as,
   once = true,
 }: RevealProps) {
-  const { motion } = useBrand()
+  const { motion } = useTokens()
   const ref = useRef<HTMLDivElement | null>(null)
   const [visible, setVisible] = useState(false)
   const Tag = (as ?? "div") as ElementType

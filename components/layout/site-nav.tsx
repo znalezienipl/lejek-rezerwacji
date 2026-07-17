@@ -3,12 +3,12 @@
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { Menu, X } from "lucide-react"
-import type { BrandConfig } from "@/lib/site-config"
-import { useBrand } from "@/components/system/brand-context"
+import { useBrand, useTokens } from "@/components/system/brand-context"
 import { cn } from "@/lib/utils"
 
-export function SiteNav({ config }: { config: BrandConfig }) {
-  const { typography } = useBrand()
+export function SiteNav() {
+  const config = useBrand()
+  const { typography } = useTokens()
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
   const upper = typography.headingCase === "uppercase"

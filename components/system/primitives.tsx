@@ -46,20 +46,24 @@ export function Container({
 export function Eyebrow({
   children,
   className,
+  theme,
+  withRule = true,
 }: {
   children: React.ReactNode
   className?: string
+  theme?: ThemeId
+  withRule?: boolean
 }) {
+  const tracking = theme ? designTokens[theme].typography.eyebrowTracking : "0.3em"
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-3 font-sans text-[0.7rem] font-medium uppercase",
-        "text-accent",
+        "inline-flex items-center gap-3 font-sans text-[0.7rem] font-medium uppercase text-accent",
         className,
       )}
-      style={{ letterSpacing: "var(--zb-eyebrow-tracking, 0.3em)" }}
+      style={{ letterSpacing: tracking }}
     >
-      <span aria-hidden className="h-px w-6 bg-accent/60" />
+      {withRule && <span aria-hidden className="h-px w-6 bg-accent/60" />}
       {children}
     </span>
   )
@@ -68,16 +72,20 @@ export function Eyebrow({
 export function SectionHeading({
   children,
   className,
+  theme,
   as: Tag = "h2",
 }: {
   children: React.ReactNode
   className?: string
+  theme?: ThemeId
   as?: "h1" | "h2" | "h3"
 }) {
+  const upper = theme ? designTokens[theme].typography.headingCase === "uppercase" : false
   return (
     <Tag
       className={cn(
-        "font-serif font-light leading-[1.05] text-balance text-foreground",
+        "font-serif font-light leading-[1.05] text-balance text-foreground text-3xl sm:text-4xl md:text-5xl",
+        upper && "uppercase tracking-[0.06em]",
         className,
       )}
     >
