@@ -44,9 +44,13 @@ export function ShowcaseLanding() {
           </span>
           <span className="mt-1 text-[0.6rem] uppercase tracking-[0.35em] text-[#f3efe8]/50">Beauty Studio</span>
         </div>
-        <span className="hidden text-xs uppercase tracking-[0.25em] text-[#f3efe8]/50 sm:block">
-          Premium Website Systems
-        </span>
+        <Link
+          href="/booking"
+          className="group inline-flex items-center gap-2 border border-[#f3efe8]/20 px-4 py-2 text-[0.65rem] uppercase tracking-[0.25em] text-[#f3efe8]/70 transition-colors hover:border-[#b79b6e] hover:text-[#f3efe8]"
+        >
+          Booking system · 9 mockups
+          <ArrowUpRight className="size-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+        </Link>
       </header>
 
       {/* Hero */}

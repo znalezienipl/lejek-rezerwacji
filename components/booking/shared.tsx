@@ -144,7 +144,7 @@ export function Duration({ children, className }: { children: React.ReactNode; c
 
 export function Tag({ children }: { children: React.ReactNode }) {
   return (
-    <span className="rounded-[var(--radius)] bg-accent/15 px-2 py-0.5 font-sans text-[0.58rem] font-semibold uppercase tracking-[0.12em] text-accent">
+    <span className="inline-flex w-fit shrink-0 self-start whitespace-nowrap rounded-[min(var(--radius),9999px)] bg-accent/15 px-2 py-0.5 font-sans text-[0.58rem] font-semibold uppercase tracking-[0.12em] text-accent">
       {children}
     </span>
   )
