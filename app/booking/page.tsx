@@ -29,9 +29,12 @@ export default function BookingIndexPage() {
           </span>
           <span className="mt-1 text-[0.6rem] uppercase tracking-[0.35em] text-[#f3efe8]/50">Beauty Studio</span>
         </Link>
-        <span className="hidden text-xs uppercase tracking-[0.25em] text-[#f3efe8]/50 sm:block">
-          Booking System Exploration
-        </span>
+        <Link
+          href="/system"
+          className="hidden text-xs uppercase tracking-[0.22em] text-[#f3efe8]/50 transition-colors hover:text-[#f3efe8] sm:block"
+        >
+          Booking + client panel systems
+        </Link>
       </header>
 
       {/* ---------------- hero ---------------- */}

@@ -1,5 +1,5 @@
 import Image from "next/image"
-import { Check, Clock, Star } from "lucide-react"
+import { Check, Clock, Gift, Star } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { designTokens, type ThemeId } from "@/tokens/design-tokens"
 import { calendar } from "@/lib/booking-data"
@@ -315,6 +315,230 @@ export function CalendarLegend({ theme }: { theme: ThemeId }) {
           </Label>
         </span>
       ))}
+    </div>
+  )
+}
+
+/* ------------------------------------------------------------------ */
+/* Client-panel primitives                                             */
+/* Shared with the booking flow so both read as one product.           */
+/* ------------------------------------------------------------------ */
+
+export type VisitStatus = "confirmed" | "pending" | "completed" | "cancelled"
+
+const statusCopy: Record<VisitStatus, string> = {
+  confirmed: "Confirmed",
+  pending: "Awaiting confirmation",
+  completed: "Completed",
+  cancelled: "Cancelled",
+}
+
+/** Status of a visit. Uses only themed tokens — no new colours. */
+export function StatusPill({ status, theme }: { status: VisitStatus; theme: ThemeId }) {
+  const organic = designTokens[theme].corners.style === "organic"
+  return (
+    <span
+      className={cn(
+        "inline-flex w-fit shrink-0 items-center gap-1.5 whitespace-nowrap border px-2 py-0.5 font-sans text-[0.58rem] font-semibold uppercase tracking-[0.12em]",
+        organic ? "rounded-full" : "rounded-[var(--radius)]",
+        status === "confirmed" && "border-transparent bg-accent/15 text-accent",
+        status === "pending" && "border-accent/50 text-accent",
+        status === "completed" && "border-border bg-secondary/50 text-muted-foreground",
+        status === "cancelled" && "border-border text-muted-foreground/70 line-through",
+      )}
+    >
+      {status === "confirmed" && <Check className="size-2.5" aria-hidden />}
+      {statusCopy[status]}
+    </span>
+  )
+}
+
+/**
+ * Segmented progress track for packages/karnety.
+ * Each visit is its own segment so "3 of 5" is legible at a glance,
+ * never just a number.
+ */
+export function ProgressTrack({
+  used,
+  total,
+  theme,
+  size = "md",
+}: {
+  used: number
+  total: number
+  theme: ThemeId
+  size?: "sm" | "md"
+}) {
+  const organic = designTokens[theme].corners.style === "organic"
+  return (
+    <div className="flex items-center gap-1.5" role="img" aria-label={`${used} of ${total} used`}>
+      {Array.from({ length: total }, (_, index) => (
+        <span
+          key={index}
+          aria-hidden
+          className={cn(
+            "flex-1 border",
+            size === "sm" ? "h-1.5" : "h-2.5",
+            organic ? "rounded-full" : "rounded-[2px]",
+            index < used ? "border-transparent bg-accent" : "border-border bg-secondary/40",
+          )}
+        />
+      ))}
+    </div>
+  )
+}
+
+/** Loyalty stamps — collected ones filled, remaining outlined. */
+export function StampGrid({
+  collected,
+  total,
+  theme,
+}: {
+  collected: number
+  total: number
+  theme: ThemeId
+}) {
+  const organic = designTokens[theme].corners.style === "organic"
+  return (
+    <div
+      className="flex flex-wrap gap-2"
+      role="img"
+      aria-label={`${collected} of ${total} loyalty stamps collected`}
+    >
+      {Array.from({ length: total }, (_, index) => {
+        const filled = index < collected
+        const isReward = index === total - 1
+        return (
+          <span
+            key={index}
+            aria-hidden
+            className={cn(
+              "flex size-8 items-center justify-center border font-sans text-[0.62rem] font-semibold tabular-nums",
+              organic ? "rounded-full" : "rounded-[var(--radius)]",
+              filled
+                ? "border-transparent bg-accent text-accent-foreground"
+                : isReward
+                  ? "border-accent border-dashed text-accent"
+                  : "border-border text-muted-foreground/60",
+            )}
+          >
+            {filled ? <Check className="size-3.5" /> : isReward ? <Gift className="size-3.5" /> : index + 1}
+          </span>
+        )
+      })}
+    </div>
+  )
+}
+
+/** Tab strip separating upcoming from past visits. */
+export function Tabs({
+  theme,
+  items,
+  activeId,
+}: {
+  theme: ThemeId
+  items: { id: string; label: string; count?: number }[]
+  activeId: string
+}) {
+  return (
+    <div role="tablist" className="flex items-center gap-1 border-b border-border">
+      {items.map((item) => {
+        const active = item.id === activeId
+        return (
+          <span
+            key={item.id}
+            role="tab"
+            aria-selected={active}
+            className={cn(
+              "-mb-px inline-flex items-center gap-2 border-b-2 px-3 py-2.5 font-sans text-[0.74rem]",
+              isUpper(theme) && "uppercase tracking-[0.1em] text-[0.68rem]",
+              active
+                ? "border-accent font-medium text-foreground"
+                : "border-transparent text-muted-foreground",
+            )}
+          >
+            {item.label}
+            {item.count !== undefined && (
+              <span
+                className={cn(
+                  "font-sans text-[0.6rem] tabular-nums",
+                  active ? "text-accent" : "text-muted-foreground/60",
+                )}
+              >
+                {item.count}
+              </span>
+            )}
+          </span>
+        )
+      })}
+    </div>
+  )
+}
+
+/**
+ * Date block used on the left of every visit row — gives the panel its own
+ * scannable rhythm while staying inside the world's corner language.
+ */
+export function DateBlock({
+  weekday,
+  date,
+  theme,
+  dimmed,
+}: {
+  weekday: string
+  date: string
+  theme: ThemeId
+  dimmed?: boolean
+}) {
+  const organic = designTokens[theme].corners.style === "organic"
+  return (
+    <span
+      className={cn(
+        "flex size-12 shrink-0 flex-col items-center justify-center border",
+        organic ? "rounded-full" : "rounded-[var(--radius)]",
+        dimmed ? "border-border bg-secondary/30" : "border-accent/40 bg-accent/10",
+      )}
+    >
+      <span
+        className={cn(
+          "font-sans text-[0.55rem] uppercase tracking-[0.1em]",
+          dimmed ? "text-muted-foreground" : "text-accent",
+        )}
+      >
+        {weekday}
+      </span>
+      <span
+        className={cn(
+          "font-sans text-[0.68rem] font-semibold tabular-nums leading-tight",
+          dimmed ? "text-muted-foreground" : "text-foreground",
+        )}
+      >
+        {date}
+      </span>
+    </span>
+  )
+}
+
+/** Field row for the editable contact-details screen. */
+export function Field({
+  theme,
+  label,
+  value,
+  hint,
+}: {
+  theme: ThemeId
+  label: string
+  value: string
+  hint?: string
+}) {
+  return (
+    <div className="flex items-start justify-between gap-4 py-3">
+      <div className="min-w-0">
+        <Label theme={theme}>{label}</Label>
+        <span className="mt-1 block font-sans text-[0.8rem] text-foreground">{value}</span>
+        {hint && <span className="mt-0.5 block font-sans text-[0.66rem] text-muted-foreground">{hint}</span>}
+      </div>
+      <span className="shrink-0 font-sans text-[0.66rem] uppercase tracking-[0.12em] text-accent">Edit</span>
     </div>
   )
 }
