@@ -543,6 +543,51 @@ export function Field({
   )
 }
 
+/**
+ * Switch for opt-in settings. Static — the `on` value is passed in.
+ * Track uses the world's accent when on; the knob stays high-contrast in
+ * every theme via background + border + shadow.
+ */
+export function Toggle({ on, theme }: { on: boolean; theme: ThemeId }) {
+  void theme
+  return (
+    <span
+      role="switch"
+      aria-checked={on}
+      className={cn(
+        "relative inline-flex h-6 w-11 shrink-0 items-center rounded-full border transition-colors",
+        on ? "border-transparent bg-accent" : "border-border bg-muted-foreground/25",
+      )}
+    >
+      <span
+        aria-hidden
+        className={cn(
+          "absolute size-[18px] rounded-full border border-border/40 bg-background shadow-sm transition-all",
+          on ? "left-[calc(100%-20px)]" : "left-[3px]",
+        )}
+      />
+    </span>
+  )
+}
+
+/** Checkbox for a single opt-in. Square softens to the world's corner language. */
+export function CheckBox({ checked, theme }: { checked: boolean; theme: ThemeId }) {
+  const organic = designTokens[theme].corners.style === "organic"
+  return (
+    <span
+      role="checkbox"
+      aria-checked={checked}
+      className={cn(
+        "flex size-5 shrink-0 items-center justify-center border transition-colors",
+        organic ? "rounded-md" : "rounded-[3px]",
+        checked ? "border-transparent bg-accent text-accent-foreground" : "border-foreground/30 bg-transparent",
+      )}
+    >
+      {checked && <Check className="size-3.5" aria-hidden />}
+    </span>
+  )
+}
+
 /* ------------------------------------------------------------------ */
 /* Screen + device frames                                              */
 /* ------------------------------------------------------------------ */

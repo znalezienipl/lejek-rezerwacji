@@ -1,6 +1,6 @@
 import Link from "next/link"
 import { notFound } from "next/navigation"
-import { ArrowLeft, CalendarCheck, LayoutGrid, Monitor, Smartphone, UserRound } from "lucide-react"
+import { ArrowLeft, CalendarCheck, LayoutGrid, Monitor, ShieldCheck, Smartphone, UserRound } from "lucide-react"
 import type { Metadata } from "next"
 import { cn } from "@/lib/utils"
 import type { ThemeId } from "@/tokens/design-tokens"
@@ -8,6 +8,7 @@ import { DesktopStack, Label, MobileRail, Screen, ScreenTitle, type VariantDef }
 import { themeMeta, themeOrder } from "@/components/booking/registry"
 import { splitVariant } from "@/components/booking/variant-split"
 import { clientPanelDef } from "@/components/booking/client-panel"
+import { consentLayerDef } from "@/components/booking/consent-layer"
 
 export function generateStaticParams() {
   return themeOrder.map((theme) => ({ theme }))
@@ -32,6 +33,7 @@ function ElementBlock({
   theme,
   def,
   index,
+  total,
   id,
   icon: Icon,
   heading,
@@ -39,6 +41,7 @@ function ElementBlock({
   theme: ThemeId
   def: VariantDef
   index: number
+  total: number
   id: string
   icon: typeof CalendarCheck
   heading: string
@@ -56,7 +59,7 @@ function ElementBlock({
           </span>
           <div className="min-w-0 flex-1">
             <Label theme={theme}>
-              Element {index} of 2 · {heading}
+              Element {index} of {total} · {heading}
             </Label>
             <ScreenTitle theme={theme} as="h2" className="mt-1.5 text-3xl sm:text-4xl">
               {def.name}
@@ -165,6 +168,12 @@ export default async function SystemPairPage({ params }: { params: Promise<{ the
             >
               2. Client panel
             </a>
+            <a
+              href="#consent"
+              className="rounded-[var(--radius)] border border-transparent px-2.5 py-1.5 font-sans text-[0.68rem] text-muted-foreground transition-colors hover:border-accent hover:text-foreground"
+            >
+              3. Consent
+            </a>
           </nav>
         </div>
       </header>
@@ -180,9 +189,10 @@ export default async function SystemPairPage({ params }: { params: Promise<{ the
             <p className="mt-3 font-sans text-sm text-accent">Booking system + client panel</p>
           </div>
           <p className="font-sans text-sm leading-relaxed text-muted-foreground">
-            Two elements built from the same design language. The booking flow keeps the seven-step Split Panel
-            structure, and the client panel — where she lands from an email or SMS link — reuses its rail, cards
-            and typography, so moving between them never feels like a different website.
+            Three elements built from the same design language. The booking flow keeps the seven-step Split Panel
+            structure, the client panel — where she lands from an email or SMS link — reuses its rail, cards and
+            typography, and a consent layer runs through both: two asks that are never bundled, with the optional
+            reminder off by default.
           </p>
         </div>
 
@@ -198,10 +208,11 @@ export default async function SystemPairPage({ params }: { params: Promise<{ the
         </dl>
 
         {/* element index */}
-        <div className="mt-12 grid gap-4 sm:grid-cols-2">
+        <div className="mt-12 grid gap-4 sm:grid-cols-3">
           {[
             { href: "#booking", icon: CalendarCheck, n: "01", name: splitVariant.name, note: "7 screens · booking flow" },
             { href: "#panel", icon: UserRound, n: "02", name: clientPanelDef.name, note: "7 screens · account area" },
+            { href: "#consent", icon: ShieldCheck, n: "03", name: consentLayerDef.name, note: "6 screens · panel, booking & link" },
           ].map((item) => (
             <a
               key={item.href}
@@ -231,6 +242,7 @@ export default async function SystemPairPage({ params }: { params: Promise<{ the
         theme={theme}
         def={splitVariant}
         index={1}
+        total={3}
         id="booking"
         icon={CalendarCheck}
         heading="Booking system"
@@ -241,9 +253,21 @@ export default async function SystemPairPage({ params }: { params: Promise<{ the
         theme={theme}
         def={clientPanelDef}
         index={2}
+        total={3}
         id="panel"
         icon={UserRound}
         heading="Client panel"
+      />
+
+      {/* ---------------- element 3: consent layer ---------------- */}
+      <ElementBlock
+        theme={theme}
+        def={consentLayerDef}
+        index={3}
+        total={3}
+        id="consent"
+        icon={ShieldCheck}
+        heading="Consent layer"
       />
 
       {/* ---------------- footer ---------------- */}
