@@ -1,6 +1,6 @@
 import Link from "next/link"
 import { notFound } from "next/navigation"
-import { ArrowLeft, BadgePercent, CalendarCheck, LayoutGrid, Monitor, ShieldCheck, Smartphone, UserRound } from "lucide-react"
+import { ArrowLeft, BadgePercent, CalendarCheck, LayoutGrid, Monitor, ShieldCheck, Smartphone, TicketPercent, UserRound } from "lucide-react"
 import type { Metadata } from "next"
 import { cn } from "@/lib/utils"
 import type { ThemeId } from "@/tokens/design-tokens"
@@ -10,6 +10,7 @@ import { splitVariant } from "@/components/booking/variant-split"
 import { clientPanelDef } from "@/components/booking/client-panel"
 import { consentLayerDef } from "@/components/booking/consent-layer"
 import { visitRewardsDef } from "@/components/booking/visit-rewards"
+import { promoCodeDef } from "@/components/booking/promo-code"
 
 export function generateStaticParams() {
   return themeOrder.map((theme) => ({ theme }))
@@ -181,6 +182,12 @@ export default async function SystemPairPage({ params }: { params: Promise<{ the
             >
               4. Discounts
             </a>
+            <a
+              href="#promo"
+              className="rounded-[var(--radius)] border border-transparent px-2.5 py-1.5 font-sans text-[0.68rem] text-muted-foreground transition-colors hover:border-accent hover:text-foreground"
+            >
+              5. Promo code
+            </a>
           </nav>
         </div>
       </header>
@@ -196,10 +203,9 @@ export default async function SystemPairPage({ params }: { params: Promise<{ the
             <p className="mt-3 font-sans text-sm text-accent">Booking system + client panel</p>
           </div>
           <p className="font-sans text-sm leading-relaxed text-muted-foreground">
-            Four elements built from the same design language. The booking flow keeps the seven-step Split Panel
-            structure, the client panel — where she lands from an email or SMS link — reuses its rail, cards and
-            typography, a consent layer runs through both, and a visit-discount programme counts every covered
-            visit toward the next percentage off.
+            Five elements built from the same design language — the seven-step booking flow, the client panel she
+            lands on, a consent layer that runs through both, a visit-discount programme, and a quiet promo-code
+            field on the summary that stays out of the way until she actually has a code.
           </p>
         </div>
 
@@ -215,12 +221,13 @@ export default async function SystemPairPage({ params }: { params: Promise<{ the
         </dl>
 
         {/* element index */}
-        <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {[
             { href: "#booking", icon: CalendarCheck, n: "01", name: splitVariant.name, note: "7 screens · booking flow" },
             { href: "#panel", icon: UserRound, n: "02", name: clientPanelDef.name, note: "7 screens · account area" },
             { href: "#consent", icon: ShieldCheck, n: "03", name: consentLayerDef.name, note: "6 screens · panel, booking & link" },
             { href: "#rewards", icon: BadgePercent, n: "04", name: visitRewardsDef.name, note: "5 states · one visit counter" },
+            { href: "#promo", icon: TicketPercent, n: "05", name: promoCodeDef.name, note: "6 states · summary field" },
           ].map((item) => (
             <a
               key={item.href}
@@ -250,7 +257,7 @@ export default async function SystemPairPage({ params }: { params: Promise<{ the
         theme={theme}
         def={splitVariant}
         index={1}
-        total={4}
+        total={5}
         id="booking"
         icon={CalendarCheck}
         heading="Booking system"
@@ -261,7 +268,7 @@ export default async function SystemPairPage({ params }: { params: Promise<{ the
         theme={theme}
         def={clientPanelDef}
         index={2}
-        total={4}
+        total={5}
         id="panel"
         icon={UserRound}
         heading="Client panel"
@@ -272,7 +279,7 @@ export default async function SystemPairPage({ params }: { params: Promise<{ the
         theme={theme}
         def={consentLayerDef}
         index={3}
-        total={4}
+        total={5}
         id="consent"
         icon={ShieldCheck}
         heading="Consent layer"
@@ -283,10 +290,21 @@ export default async function SystemPairPage({ params }: { params: Promise<{ the
         theme={theme}
         def={visitRewardsDef}
         index={4}
-        total={4}
+        total={5}
         id="rewards"
         icon={BadgePercent}
         heading="Visit discounts"
+      />
+
+      {/* ---------------- element 5: promo code ---------------- */}
+      <ElementBlock
+        theme={theme}
+        def={promoCodeDef}
+        index={5}
+        total={5}
+        id="promo"
+        icon={TicketPercent}
+        heading="Promo code"
       />
 
       {/* ---------------- footer ---------------- */}
