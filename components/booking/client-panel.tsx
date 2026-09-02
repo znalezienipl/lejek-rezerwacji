@@ -13,7 +13,6 @@ import {
   ProgressTrack,
   ScreenTitle,
   SpecialistRow,
-  StampGrid,
   StatusPill,
   Surface,
   Tabs,
@@ -27,13 +26,13 @@ import {
   cancelPolicy,
   clientProfile,
   emptyState,
-  loyalty,
   packages,
   panelTabs,
   pastAppointments,
   rescheduleSuggestions,
   upcomingAppointments,
 } from "@/lib/client-panel-data"
+import { VisitRewards } from "./visit-rewards"
 
 /* ------------------------------------------------------------------ */
 /* Client panel — the counterpart to the "Split Panel" booking flow.   */
@@ -42,7 +41,7 @@ import {
 
 const panelNav = [
   { id: "visits", label: "My visits", icon: CalendarDays },
-  { id: "packages", label: "Packages & loyalty", icon: Gift },
+  { id: "packages", label: "Packages & discounts", icon: Gift },
   { id: "details", label: "Your details", icon: User },
 ]
 
@@ -281,7 +280,7 @@ export const clientPanelDef: VariantDef = {
   name: "Client Panel",
   approach: "Mobile-first account area · reached from an email or SMS link",
   description:
-    "Where the client lands after booking. It reuses the Split Panel skeleton — a rail that always shows who she is and when her next visit is, plus a main panel of scannable cards. Upcoming and past visits are split by tabs, packages are shown as segmented progress tracks and loyalty as collectable stamps.",
+    "Where the client lands after booking. It reuses the Split Panel skeleton — a rail that always shows who she is and when her next visit is, plus a main panel of scannable cards. Upcoming and past visits are split by tabs, prepaid packages are shown as segmented progress tracks, and the visit-discount programme counts every covered visit toward the next percentage off.",
   screens: [
     /* 1 — panel home, upcoming visits */
     {
@@ -551,14 +550,14 @@ export const clientPanelDef: VariantDef = {
       ),
     },
 
-    /* 5 — packages & loyalty */
+    /* 5 — packages & visit discounts */
     {
-      title: "Packages & loyalty",
+      title: "Packages & visit discounts",
       render: (theme) => (
         <PanelShell
           theme={theme}
           nav="packages"
-          eyebrow="Packages & loyalty"
+          eyebrow="Packages & discounts"
           title="Your packages"
           action={
             <Btn full>
@@ -574,29 +573,8 @@ export const clientPanelDef: VariantDef = {
               ))}
             </div>
 
-            {/* loyalty stamps */}
-            <Surface className="p-4">
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <ScreenTitle theme={theme} as="h4" className="text-[0.95rem]">
-                    {loyalty.title}
-                  </ScreenTitle>
-                  <span className="mt-0.5 block font-sans text-[0.68rem] text-muted-foreground">
-                    {loyalty.caption}
-                  </span>
-                </div>
-                <Tag>{loyalty.note}</Tag>
-              </div>
-              <div className="mt-4">
-                <StampGrid collected={loyalty.collected} total={loyalty.total} theme={theme} />
-              </div>
-              <div className="mt-4 flex items-start gap-2.5 border-t border-border pt-3">
-                <Gift className="mt-0.5 size-3.5 shrink-0 text-accent" aria-hidden />
-                <span className="font-sans text-[0.7rem] leading-relaxed text-muted-foreground">
-                  {loyalty.reward}
-                </span>
-              </div>
-            </Surface>
+            {/* visit-discount programme — one counter, percentage off at milestones */}
+            <VisitRewards theme={theme} visits={clientProfile.visits} width="mobile" />
           </div>
         </PanelShell>
       ),
@@ -718,7 +696,7 @@ export const clientPanelDef: VariantDef = {
               </ul>
             </Surface>
 
-            {/* dormant package/loyalty placeholders so the layout is not bare */}
+            {/* dormant package/discount placeholders so the layout is not bare */}
             <div className="flex flex-col gap-4 @3xl:grid @3xl:grid-cols-2 @3xl:items-start">
               <Surface muted className="p-4">
                 <Label theme={theme}>Packages</Label>
@@ -730,12 +708,12 @@ export const clientPanelDef: VariantDef = {
                 </div>
               </Surface>
               <Surface muted className="p-4">
-                <Label theme={theme}>Loyalty card</Label>
+                <Label theme={theme}>Visit discounts</Label>
                 <span className="mt-2 block font-sans text-[0.72rem] text-muted-foreground">
-                  Your first stamp arrives after your first visit.
+                  The counter starts after your first visit on a covered treatment.
                 </span>
                 <div className="mt-3">
-                  <StampGrid collected={0} total={10} theme={theme} />
+                  <ProgressTrack used={0} total={6} theme={theme} size="sm" />
                 </div>
               </Surface>
             </div>

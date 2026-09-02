@@ -1,6 +1,6 @@
 import Link from "next/link"
 import { notFound } from "next/navigation"
-import { ArrowLeft, CalendarCheck, LayoutGrid, Monitor, ShieldCheck, Smartphone, UserRound } from "lucide-react"
+import { ArrowLeft, BadgePercent, CalendarCheck, LayoutGrid, Monitor, ShieldCheck, Smartphone, UserRound } from "lucide-react"
 import type { Metadata } from "next"
 import { cn } from "@/lib/utils"
 import type { ThemeId } from "@/tokens/design-tokens"
@@ -9,6 +9,7 @@ import { themeMeta, themeOrder } from "@/components/booking/registry"
 import { splitVariant } from "@/components/booking/variant-split"
 import { clientPanelDef } from "@/components/booking/client-panel"
 import { consentLayerDef } from "@/components/booking/consent-layer"
+import { visitRewardsDef } from "@/components/booking/visit-rewards"
 
 export function generateStaticParams() {
   return themeOrder.map((theme) => ({ theme }))
@@ -174,6 +175,12 @@ export default async function SystemPairPage({ params }: { params: Promise<{ the
             >
               3. Consent
             </a>
+            <a
+              href="#rewards"
+              className="rounded-[var(--radius)] border border-transparent px-2.5 py-1.5 font-sans text-[0.68rem] text-muted-foreground transition-colors hover:border-accent hover:text-foreground"
+            >
+              4. Discounts
+            </a>
           </nav>
         </div>
       </header>
@@ -189,10 +196,10 @@ export default async function SystemPairPage({ params }: { params: Promise<{ the
             <p className="mt-3 font-sans text-sm text-accent">Booking system + client panel</p>
           </div>
           <p className="font-sans text-sm leading-relaxed text-muted-foreground">
-            Three elements built from the same design language. The booking flow keeps the seven-step Split Panel
+            Four elements built from the same design language. The booking flow keeps the seven-step Split Panel
             structure, the client panel — where she lands from an email or SMS link — reuses its rail, cards and
-            typography, and a consent layer runs through both: two asks that are never bundled, with the optional
-            reminder off by default.
+            typography, a consent layer runs through both, and a visit-discount programme counts every covered
+            visit toward the next percentage off.
           </p>
         </div>
 
@@ -208,11 +215,12 @@ export default async function SystemPairPage({ params }: { params: Promise<{ the
         </dl>
 
         {/* element index */}
-        <div className="mt-12 grid gap-4 sm:grid-cols-3">
+        <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {[
             { href: "#booking", icon: CalendarCheck, n: "01", name: splitVariant.name, note: "7 screens · booking flow" },
             { href: "#panel", icon: UserRound, n: "02", name: clientPanelDef.name, note: "7 screens · account area" },
             { href: "#consent", icon: ShieldCheck, n: "03", name: consentLayerDef.name, note: "6 screens · panel, booking & link" },
+            { href: "#rewards", icon: BadgePercent, n: "04", name: visitRewardsDef.name, note: "5 states · one visit counter" },
           ].map((item) => (
             <a
               key={item.href}

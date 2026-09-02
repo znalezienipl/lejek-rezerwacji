@@ -198,15 +198,112 @@ export const packages = [
   },
 ]
 
-/** Loyalty stamps — 10 visits, one free treatment. */
-export const loyalty = {
-  title: "Loyalty card",
-  caption: "Every 10th visit is on us",
-  collected: 7,
-  total: 10,
-  reward: "A complimentary 60-minute treatment of your choice",
-  note: "3 more visits to your reward",
+/**
+ * Visit-discount programme — NOT a stamp card.
+ *
+ * The salon counts VISITS (one counter across every covered service), and at
+ * certain visit numbers that single visit is cheaper by a percentage. The
+ * discount is not permanent: after a threshold the client returns to the base
+ * price and keeps counting toward the next one.
+ *
+ * The number of thresholds and their values differ per salon, so nothing that
+ * consumes this may assume there are exactly three.
+ */
+export interface RewardThreshold {
+  /** Visit number whose price is reduced. */
+  visit: number
+  /** Percentage off that one visit. */
+  discount: number
 }
+
+export const rewardsProgram = {
+  clientName: "Anna",
+  coveredLabel: "Masaże i zabiegi na ciało",
+  coveredNote: "Nie wszystkie usługi z cennika są objęte.",
+  thresholds: [
+    { visit: 6, discount: 10 },
+    { visit: 12, discount: 15 },
+    { visit: 18, discount: 20 },
+  ] as RewardThreshold[],
+}
+
+export type RewardStatus = "empty" | "collecting" | "close" | "due"
+
+export interface RewardView {
+  status: RewardStatus
+  visits: number
+  /** Thresholds already crossed — history, not an active benefit. */
+  passed: RewardThreshold[]
+  /** Threshold that lands exactly now: the nearest visit is discounted. */
+  due: RewardThreshold | null
+  /** Next threshold still ahead (null once all are behind). */
+  next: RewardThreshold | null
+  /** Visits left until `next`. */
+  remaining: number
+  /** Progress bar spans the leg between the previous and the next milestone. */
+  barBase: number
+  barTarget: number
+  barFilled: number
+}
+
+/** Pure derivation so every state and every salon shape flows from one rule. */
+export function deriveReward(
+  visits: number,
+  thresholds: RewardThreshold[] = rewardsProgram.thresholds,
+): RewardView {
+  const sorted = [...thresholds].sort((a, b) => a.visit - b.visit)
+  const first = sorted[0] ?? null
+
+  if (visits <= 0) {
+    return {
+      status: "empty",
+      visits: 0,
+      passed: [],
+      due: null,
+      next: first,
+      remaining: first?.visit ?? 0,
+      barBase: 0,
+      barTarget: first?.visit ?? 1,
+      barFilled: 0,
+    }
+  }
+
+  const due = sorted.find((t) => t.visit === visits) ?? null
+  const passed = sorted.filter((t) => t.visit < visits)
+  const next = sorted.find((t) => t.visit > visits) ?? null
+  const prevVisit = passed.length ? passed[passed.length - 1].visit : 0
+
+  let barBase: number
+  let barTarget: number
+  let barFilled: number
+  if (due) {
+    barBase = prevVisit
+    barTarget = due.visit
+    barFilled = barTarget - barBase
+  } else if (next) {
+    barBase = prevVisit
+    barTarget = next.visit
+    barFilled = visits - barBase
+  } else {
+    barBase = prevVisit
+    barTarget = visits
+    barFilled = visits - barBase
+  }
+
+  const remaining = next ? next.visit - visits : 0
+  const status: RewardStatus = due ? "due" : next && remaining === 1 ? "close" : "collecting"
+
+  return { status, visits, passed, due, next, remaining, barBase, barTarget, barFilled }
+}
+
+/** The five states the rewards screen must present, in review order. */
+export const rewardStates: { id: string; label: string; visits: number }[] = [
+  { id: "collecting", label: "Zbiera", visits: 4 },
+  { id: "close", label: "Blisko", visits: 5 },
+  { id: "due", label: "Zniżka należna", visits: 6 },
+  { id: "past", label: "Po pierwszym progu", visits: 8 },
+  { id: "empty", label: "Pusto", visits: 0 },
+]
 
 export const panelTabs = [
   { id: "upcoming", label: "Upcoming", count: 2 },
@@ -232,13 +329,13 @@ export const rescheduleSuggestions = [
 /** Copy for the new-client empty state. */
 export const emptyState = {
   title: "No visits yet",
-  body: "This is where your appointments, packages and loyalty stamps will live. Book your first treatment and everything will appear here automatically.",
+  body: "This is where your appointments, packages and visit discounts will live. Book your first treatment and everything will appear here automatically.",
   primary: "Book your first visit",
   secondary: "Browse treatments",
   hints: [
     "Reschedule or cancel in two taps",
     "Your specialist and time range always visible",
-    "Packages and stamps counted automatically",
+    "Visits counted automatically toward your next discount",
   ],
 }
 
@@ -247,7 +344,7 @@ export const panelScreenTitles = [
   "Visit details",
   "Cancel or reschedule",
   "Past visits history",
-  "Packages & loyalty",
+  "Packages & visit discounts",
   "Your details",
   "Empty state · new client",
 ]
