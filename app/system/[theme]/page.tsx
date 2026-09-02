@@ -250,7 +250,7 @@ export default async function SystemPairPage({ params }: { params: Promise<{ the
         theme={theme}
         def={splitVariant}
         index={1}
-        total={3}
+        total={4}
         id="booking"
         icon={CalendarCheck}
         heading="Booking system"
@@ -261,7 +261,7 @@ export default async function SystemPairPage({ params }: { params: Promise<{ the
         theme={theme}
         def={clientPanelDef}
         index={2}
-        total={3}
+        total={4}
         id="panel"
         icon={UserRound}
         heading="Client panel"
@@ -272,10 +272,21 @@ export default async function SystemPairPage({ params }: { params: Promise<{ the
         theme={theme}
         def={consentLayerDef}
         index={3}
-        total={3}
+        total={4}
         id="consent"
         icon={ShieldCheck}
         heading="Consent layer"
+      />
+
+      {/* ---------------- element 4: visit-discount programme ---------------- */}
+      <ElementBlock
+        theme={theme}
+        def={visitRewardsDef}
+        index={4}
+        total={4}
+        id="rewards"
+        icon={BadgePercent}
+        heading="Visit discounts"
       />
 
       {/* ---------------- footer ---------------- */}
