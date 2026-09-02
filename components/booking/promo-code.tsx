@@ -19,7 +19,21 @@ import { Btn, Duration, Label, Money, ScreenTitle, Surface, TimeRange, type Vari
 /* Copy is Polish, plain-spoken.                                        */
 /* ------------------------------------------------------------------ */
 
-type PromoState = "collapsed" | "empty" | "checking" | "accepted" | "invalid" | "not-applicable"
+/**
+ * One field, two kinds of code. The system recognises the type on its own:
+ *  · "accepted"  → a discount code (4a) — this visit gets cheaper
+ *  · "referral"  → a referral code (4b) — this visit's price is UNCHANGED,
+ *                  both people get a credit toward their NEXT visit
+ * The client never picks a type and never needs to know which she holds.
+ */
+type PromoState =
+  | "collapsed"
+  | "empty"
+  | "checking"
+  | "accepted"
+  | "referral"
+  | "invalid"
+  | "not-applicable"
 
 const SERVICE = {
   name: "Masaż twarzy Kobido",
@@ -79,13 +93,13 @@ function PromoBlock({ theme, state }: { theme: ThemeId; state: PromoState }) {
     return (
       <span className="inline-flex items-center gap-2 font-sans text-[0.76rem] text-foreground underline decoration-border underline-offset-4">
         <TagIcon className="size-3.5 text-accent" aria-hidden />
-        Masz kod rabatowy?
+        Masz kod?
       </span>
     )
   }
 
   if (state === "accepted") {
-    // Field is gone; the code now lives in the summary line above.
+    // 4a — discount code. Field is gone; the code now lives in the summary line above.
     return (
       <div className="flex items-center justify-between gap-3">
         <span className="inline-flex items-center gap-2 font-sans text-[0.76rem] text-foreground">
@@ -93,6 +107,25 @@ function PromoBlock({ theme, state }: { theme: ThemeId; state: PromoState }) {
           Kod <span className="font-medium">JESIEN10</span> dodany
         </span>
         <span className="shrink-0 font-sans text-[0.7rem] text-muted-foreground underline decoration-border underline-offset-4">
+          Usuń
+        </span>
+      </div>
+    )
+  }
+
+  if (state === "referral") {
+    // 4b — referral code. This visit's price does NOT change; the reward is a
+    // credit toward the next visit for both people. Stated plainly, no fanfare.
+    return (
+      <div className="flex items-start justify-between gap-3">
+        <span className="flex min-w-0 items-start gap-2 font-sans text-[0.76rem] leading-relaxed text-foreground">
+          <Check className="mt-0.5 size-3.5 shrink-0 text-accent" aria-hidden />
+          <span>
+            Kod od Ani — Ty i Ania dostaniecie po <span className="font-medium">15 zł</span> zniżki na następną
+            wizytę.
+          </span>
+        </span>
+        <span className="mt-0.5 shrink-0 font-sans text-[0.7rem] text-muted-foreground underline decoration-border underline-offset-4">
           Usuń
         </span>
       </div>
@@ -234,7 +267,8 @@ export const promoCodeDef: VariantDef = {
     { title: "1 · Zwinięte", render: (theme) => <PromoSummaryScreen theme={theme} state="collapsed" /> },
     { title: "2 · Rozwinięte, puste", render: (theme) => <PromoSummaryScreen theme={theme} state="empty" /> },
     { title: "3 · Sprawdzanie", render: (theme) => <PromoSummaryScreen theme={theme} state="checking" /> },
-    { title: "4 · Przyjęty", render: (theme) => <PromoSummaryScreen theme={theme} state="accepted" /> },
+    { title: "4a · Przyjęty · kod rabatowy", render: (theme) => <PromoSummaryScreen theme={theme} state="accepted" /> },
+    { title: "4b · Przyjęty · kod polecający", render: (theme) => <PromoSummaryScreen theme={theme} state="referral" /> },
     { title: "5 · Nieprawidłowy", render: (theme) => <PromoSummaryScreen theme={theme} state="invalid" /> },
     {
       title: "6 · Nie dotyczy tej wizyty",
