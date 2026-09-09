@@ -122,6 +122,8 @@ export function Funnel({
     setScreen(termsVariant === "B" ? "remainingB" : "addAnother")
   }
   function afterRemaining() {
+    // full path — every visit is scheduled now, so clear any "only first" flag
+    setOnlyFirst(false)
     // package skips "add another" (step 5) and "layout" (step 6) → straight to review
     setScreen("review")
   }
@@ -187,7 +189,13 @@ export function Funnel({
 
   const secondary =
     isPackage && (screen === "time" || screen === "remainingB")
-      ? { label: "Umów tylko pierwszą wizytę, resztę wybiorę później", onClick: () => setScreen("review") }
+      ? {
+          label: "Umów tylko pierwszą wizytę, resztę wybiorę później",
+          onClick: () => {
+            setOnlyFirst(true)
+            setScreen("review")
+          },
+        }
       : undefined
 
   return (
@@ -236,14 +244,9 @@ export function Funnel({
         <StepAddAnother isPackage={isPackage} added={addedAnother} onToggle={setAddedAnother} serviceName={service.name} />
       )}
       {screen === "second" && <StepSecond />}
-      {screen === "review" && <StepReview isPackage={isPackage} pkgCount={pkgCount} serviceName={service.name} total={choice.price} onlyFirst={secondaryWasUsed(screen)} />}
+      {screen === "review" && <StepReview isPackage={isPackage} pkgCount={pkgCount} serviceName={service.name} total={choice.price} onlyFirst={onlyFirst} />}
     </FunnelChrome>
   )
-}
-
-// placeholder — "only first" is a runtime path; in this static mock review always shows the full set note
-function secondaryWasUsed(_s: Screen) {
-  return false
 }
 
 /* ============================ STEP 1 ============================ */
