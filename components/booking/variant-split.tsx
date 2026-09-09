@@ -70,7 +70,7 @@ function Cart({ theme, count = 1 }: { theme: ThemeId; count?: number }) {
   )
 }
 
-function Shell({
+export function Shell({
   theme,
   step,
   title,

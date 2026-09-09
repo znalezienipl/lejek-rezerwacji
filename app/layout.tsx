@@ -7,8 +7,6 @@ import {
   Montserrat,
   Fraunces,
   Nunito_Sans,
-  Playfair_Display,
-  Lora,
 } from 'next/font/google'
 import './globals.css'
 
@@ -30,16 +28,6 @@ const fraunces = Fraunces({
   variable: '--font-fraunces',
 })
 const nunito = Nunito_Sans({ subsets: ['latin'], variable: '--font-nunito' })
-const playfair = Playfair_Display({
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
-  variable: '--font-playfair',
-})
-const lora = Lora({
-  subsets: ['latin'],
-  weight: ['400', '500', '600'],
-  variable: '--font-lora',
-})
 
 export const metadata: Metadata = {
   title: 'Znalezieni Beauty — Premium Websites for Beauty Businesses',
@@ -61,7 +49,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="bg-background">
       <body
-        className={`${cormorant.variable} ${jost.variable} ${bodoni.variable} ${montserrat.variable} ${fraunces.variable} ${nunito.variable} ${playfair.variable} ${lora.variable} font-sans antialiased`}
+        className={`${cormorant.variable} ${jost.variable} ${bodoni.variable} ${montserrat.variable} ${fraunces.variable} ${nunito.variable} font-sans antialiased`}
       >
         {children}
         {process.env.NODE_ENV === 'production' && <Analytics />}
