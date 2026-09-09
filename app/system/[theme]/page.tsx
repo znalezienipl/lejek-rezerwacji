@@ -235,7 +235,7 @@ export default async function SystemPairPage({ params }: { params: Promise<{ the
             { href: "#consent", icon: ShieldCheck, n: "03", name: consentLayerDef.name, note: "6 screens · panel, booking & link" },
             { href: "#rewards", icon: BadgePercent, n: "04", name: visitRewardsDef.name, note: "5 states · one visit counter" },
             { href: "#promo", icon: TicketPercent, n: "05", name: promoCodeDef.name, note: "6 states · summary field" },
-            { href: "#packages", icon: Layers, n: "06", name: packageSelectDef.name, note: "2 states · step 2 of the funnel" },
+            { href: "#packages", icon: Layers, n: "06", name: packageSelectDef.name, note: "11 states · step 2 + package tail" },
           ].map((item) => (
             <a
               key={item.href}

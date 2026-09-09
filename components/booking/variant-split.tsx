@@ -34,7 +34,19 @@ import {
 /* Persistent left rail (steps + live cart), list-based right panel.   */
 /* ------------------------------------------------------------------ */
 
-function Cart({ theme, count = 1 }: { theme: ThemeId; count?: number }) {
+function Cart({
+  theme,
+  count = 1,
+  cartLine,
+  cartAmount,
+}: {
+  theme: ThemeId
+  count?: number
+  /** When set, the cart shows ONE summarised line (e.g. a package) instead of itemised visits. */
+  cartLine?: { name: string; meta: string; price: string }
+  /** Overrides the computed total (e.g. the package price). */
+  cartAmount?: string
+}) {
   const people = specialistsByTheme[theme]
   const items = draftBooking.items.slice(0, count)
   return (
@@ -44,27 +56,39 @@ function Cart({ theme, count = 1 }: { theme: ThemeId; count?: number }) {
         <Tag>{count}</Tag>
       </div>
       <div className="mt-3 flex flex-col divide-y divide-border border-t border-border">
-        {items.map((item) => (
-          <div key={item.treatmentId} className="py-3">
+        {cartLine ? (
+          <div className="py-3">
             <span className="block font-sans text-[0.75rem] font-medium leading-snug text-foreground">
-              {item.name}
+              {cartLine.name}
             </span>
             <div className="mt-1.5 flex items-center justify-between gap-2">
-              <TimeRange from={item.from} to={item.to} className="text-[0.7rem]" />
-              <Money className="text-[0.8rem]">{item.price}</Money>
-            </div>
-            <div className="mt-2 flex items-center gap-2">
-              <Avatar src={people[item.specialistIndex].image} alt={people[item.specialistIndex].name} size={20} />
-              <span className="truncate font-sans text-[0.65rem] text-muted-foreground">
-                {people[item.specialistIndex].name}
-              </span>
+              <span className="font-sans text-[0.7rem] text-muted-foreground">{cartLine.meta}</span>
+              <Money className="text-[0.8rem]">{cartLine.price}</Money>
             </div>
           </div>
-        ))}
+        ) : (
+          items.map((item) => (
+            <div key={item.treatmentId} className="py-3">
+              <span className="block font-sans text-[0.75rem] font-medium leading-snug text-foreground">
+                {item.name}
+              </span>
+              <div className="mt-1.5 flex items-center justify-between gap-2">
+                <TimeRange from={item.from} to={item.to} className="text-[0.7rem]" />
+                <Money className="text-[0.8rem]">{item.price}</Money>
+              </div>
+              <div className="mt-2 flex items-center gap-2">
+                <Avatar src={people[item.specialistIndex].image} alt={people[item.specialistIndex].name} size={20} />
+                <span className="truncate font-sans text-[0.65rem] text-muted-foreground">
+                  {people[item.specialistIndex].name}
+                </span>
+              </div>
+            </div>
+          ))
+        )}
       </div>
       <div className="flex items-center justify-between border-t border-border pt-3">
         <Label theme={theme}>Total</Label>
-        <Money>{count > 1 ? draftBooking.total : items[0].price}</Money>
+        <Money>{cartAmount ?? (count > 1 ? draftBooking.total : items[0].price)}</Money>
       </div>
     </Surface>
   )
@@ -76,6 +100,9 @@ export function Shell({
   title,
   children,
   cartCount = 1,
+  cartLine,
+  cartAmount,
+  cartLabel,
   action,
 }: {
   theme: ThemeId
@@ -83,6 +110,12 @@ export function Shell({
   title: string
   children: React.ReactNode
   cartCount?: number
+  /** One summarised cart line (packages) instead of itemised visits. */
+  cartLine?: { name: string; meta: string; price: string }
+  /** Overrides the cart total shown on desktop and mobile. */
+  cartAmount?: string
+  /** Overrides the mobile "{n} in booking" label (e.g. "Pakiet · 6 wizyt"). */
+  cartLabel?: string
   action: React.ReactNode
 }) {
   return (
@@ -133,7 +166,7 @@ export function Shell({
           })}
         </ol>
         <div className="mt-auto">
-          <Cart theme={theme} count={cartCount} />
+          <Cart theme={theme} count={cartCount} cartLine={cartLine} cartAmount={cartAmount} />
         </div>
       </aside>
 
@@ -158,10 +191,12 @@ export function Shell({
         </div>
         <div className="flex items-center justify-between gap-2 border-t border-border pt-2.5">
           <span className="flex items-center gap-2">
-            <Label theme={theme}>{cartCount} in booking</Label>
+            <Label theme={theme}>{cartLabel ?? `${cartCount} in booking`}</Label>
             <ChevronDown className="size-3 text-muted-foreground" aria-hidden />
           </span>
-          <Money className="text-sm">{cartCount > 1 ? draftBooking.total : draftBooking.items[0].price}</Money>
+          <Money className="text-sm">
+            {cartAmount ?? (cartCount > 1 ? draftBooking.total : draftBooking.items[0].price)}
+          </Money>
         </div>
       </div>
 
