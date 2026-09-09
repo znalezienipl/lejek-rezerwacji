@@ -10,22 +10,67 @@ export interface Pkg {
   validity: string
 }
 
+/** A length/price variant of one service — packages sit ALONGSIDE these, never replace them. */
+export interface Variant {
+  id: string
+  label: string
+  duration: string
+  price: string
+}
+
 export interface Service {
   id: string
   name: string
+  category: string
   price: string
   duration: string
   interval: string
+  variants: Variant[]
   packages: Pkg[]
 }
+
+/** Step 1 — services grouped by category. */
+export const serviceCategories: { label: string; serviceIds: string[] }[] = [
+  { label: "Twarz", serviceIds: ["kobido"] },
+  { label: "Ciało", serviceIds: ["endo"] },
+]
+
+export const staff = ["Svitlana", "Bogdana", "Andrzej"]
+
+/** Step 3 — a hardcoded month strip; only a few days are "free". */
+export const calendarDays: { day: number; free: boolean; chosen?: boolean }[] = [
+  { day: 13, free: true },
+  { day: 14, free: false },
+  { day: 15, free: true, chosen: true },
+  { day: 16, free: true },
+  { day: 17, free: false },
+  { day: 18, free: true },
+  { day: 20, free: true },
+  { day: 21, free: true },
+  { day: 22, free: false },
+  { day: 23, free: true },
+]
+
+/** Step 4 — time slots for the chosen first day, each with a performer. */
+export const daySlots: { id: string; time: string; staff: string }[] = [
+  { id: "s1", time: "10:00", staff: "Bogdana" },
+  { id: "s2", time: "12:30", staff: "Svitlana" },
+  { id: "s3", time: "14:00", staff: "Svitlana" },
+  { id: "s4", time: "17:30", staff: "Andrzej" },
+]
 
 export const services: Service[] = [
   {
     id: "kobido",
     name: "Masaż twarzy Kobido",
+    category: "Twarz",
     price: "180 zł",
     duration: "60 min",
     interval: "zalecany odstęp 4 tygodnie",
+    variants: [
+      { id: "kobido-60", label: "Wersja klasyczna", duration: "60 min", price: "180 zł" },
+      { id: "kobido-90", label: "Wersja rozszerzona", duration: "90 min", price: "250 zł" },
+    ],
     packages: [
       { id: "kobido-4", count: 4, total: "660 zł", perTreatment: "165 zł", save: "60 zł", validity: "90 dni" },
       { id: "kobido-6", count: 6, total: "900 zł", perTreatment: "150 zł", save: "180 zł", validity: "90 dni" },
@@ -34,9 +79,14 @@ export const services: Service[] = [
   {
     id: "endo",
     name: "Endomasaż + EMS",
+    category: "Ciało",
     price: "120 zł",
     duration: "60 min",
     interval: "zalecany odstęp 4 dni",
+    variants: [
+      { id: "endo-60", label: "Jedna partia", duration: "60 min", price: "120 zł" },
+      { id: "endo-90", label: "Dwie partie", duration: "90 min", price: "170 zł" },
+    ],
     packages: [
       { id: "endo-4", count: 4, total: "460 zł", perTreatment: "115 zł", save: "20 zł", validity: "31 dni" },
       { id: "endo-8", count: 8, total: "850 zł", perTreatment: "106,25 zł", save: "110 zł", validity: "31 dni" },
