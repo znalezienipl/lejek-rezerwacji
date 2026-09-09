@@ -7,6 +7,8 @@ import {
   Montserrat,
   Fraunces,
   Nunito_Sans,
+  Newsreader,
+  Inter,
 } from 'next/font/google'
 import './globals.css'
 
@@ -28,6 +30,13 @@ const fraunces = Fraunces({
   variable: '--font-fraunces',
 })
 const nunito = Nunito_Sans({ subsets: ['latin'], variable: '--font-nunito' })
+const newsreader = Newsreader({
+  subsets: ['latin'],
+  weight: ['400', '500', '600'],
+  style: ['normal', 'italic'],
+  variable: '--font-newsreader',
+})
+const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 
 export const metadata: Metadata = {
   title: 'Znalezieni Beauty — Premium Websites for Beauty Businesses',
@@ -49,7 +58,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="bg-background">
       <body
-        className={`${cormorant.variable} ${jost.variable} ${bodoni.variable} ${montserrat.variable} ${fraunces.variable} ${nunito.variable} font-sans antialiased`}
+        className={`${cormorant.variable} ${jost.variable} ${bodoni.variable} ${montserrat.variable} ${fraunces.variable} ${nunito.variable} ${newsreader.variable} ${inter.variable} font-sans antialiased`}
       >
         {children}
         {process.env.NODE_ENV === 'production' && <Analytics />}

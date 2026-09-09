@@ -262,6 +262,37 @@
   --highlight: oklch(0.74 0.05 40);
 }
 
+/* SALON BRAND — Pakiety prototype (dark green · cream · gold) */
+.theme-salon {
+  --font-serif: var(--font-newsreader);
+  --font-sans: var(--font-inter);
+  --radius: 8px;
+
+  --background: #f7f2ea;
+  --foreground: #13271f;
+  --card: #fffdf8;
+  --card-foreground: #13271f;
+  --popover: #fffdf8;
+  --popover-foreground: #13271f;
+  --primary: #13271f;
+  --primary-foreground: #f7f2ea;
+  --secondary: #ece5d7;
+  --secondary-foreground: #13271f;
+  --muted: #ece5d7;
+  --muted-foreground: #5d6b60;
+  --accent: #bf9445;
+  --accent-foreground: #13271f;
+  --destructive: #9a3b2e;
+  --border: #e0d7c5;
+  --input: #e0d7c5;
+  --ring: #bf9445;
+
+  --gold: #bf9445;
+  --highlight: #bf9445;
+
+  color-scheme: light;
+}
+
 /* Motion — reveal on scroll */
 @media (prefers-reduced-motion: reduce) {
   .zb-reveal {
